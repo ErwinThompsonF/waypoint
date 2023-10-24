@@ -20,10 +20,9 @@ Replace `YOUR_API_HOST_VALUE` with the appropriate value for your API host, and 
 ## Usage
 
 1. Install the project dependencies by running the following command:
-
+```
 npm install
-
-Copy
+```
 
 2. Start the development server:
 
@@ -36,5 +35,3 @@ Open your browser and navigate to http://localhost:3000 to access the applicatio
 In the installation section, we added a step (Step 3) to create a new file named `.env` in the root directory of the project. We also provided instructions on adding the required environment variables (`API_HOST` and `MAP_API_KEY`) in the `.env` file.
 
 Make sure to replace `YOUR_API_HOST_VALUE` with the actual API host value and `YOUR_MAP_API_KEY_VALUE` with your Google Maps API key.
-
-Feel free to customize the rest of the README file as per your project's requirements.
