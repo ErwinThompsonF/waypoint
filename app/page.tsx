@@ -10,22 +10,21 @@ const App: React.FC = () => {
   const [waypoints, setWaypoints] = useState<string[][]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [wayPointError, setWayPointError] = useState<string | null>(null);
+  const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
   const mapRef = useRef<google.maps.Map | null>(null);
   const pickupAutocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const dropoffAutocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let labelIndex = 0;
-  const markers: google.maps.Marker[] = []
+  const loader = new Loader({
+    apiKey: process.env.MAP_API_KEY ?? '',
+    version: 'weekly',
+    libraries: ['places'],
+  });
 
   const loadMap = useCallback(async () => {
-    const loader = new Loader({
-      apiKey: process.env.MAP_API_KEY ?? '',
-      version: 'weekly',
-      libraries: ['places'],
-    });
-
-    const google = await loader.load();
-    const { Map } = google.maps;
+    const { Map } = await loader.importLibrary("maps")
+    const { Autocomplete } = await loader.importLibrary("places")
 
     const mapElement = document.getElementById('map') as HTMLElement;
     mapRef.current = new Map(mapElement, {
@@ -36,8 +35,8 @@ const App: React.FC = () => {
     const pickupInput = document.getElementById('pickup-input') as HTMLInputElement;
     const dropoffInput = document.getElementById('dropoff-input') as HTMLInputElement;
 
-    pickupAutocompleteRef.current = new google.maps.places.Autocomplete(pickupInput);
-    dropoffAutocompleteRef.current = new google.maps.places.Autocomplete(dropoffInput);
+    pickupAutocompleteRef.current = new Autocomplete(pickupInput);
+    dropoffAutocompleteRef.current = new Autocomplete(dropoffInput);
 
     pickupAutocompleteRef.current.addListener('place_changed', () => {
       const place = pickupAutocompleteRef.current!.getPlace();
@@ -54,26 +53,30 @@ const App: React.FC = () => {
     });
   }, []);
 
-  const renderMapWaypoints = useCallback(() => {
+  const renderMapWaypoints = useCallback(async () => {
     const map = mapRef.current;
 
     if (map && waypoints.length > 0) {
-      const bounds = new google.maps.LatLngBounds();
+      const { LatLngBounds, LatLng } = await loader.importLibrary("core")
+      const { Marker } = await loader.importLibrary("marker")
+      const bounds = new LatLngBounds();
 
       waypoints.forEach((waypoint) => {
-        const latLng = new google.maps.LatLng(
+        const latLng = new LatLng(
           parseFloat(waypoint[0]),
           parseFloat(waypoint[1])
         );
 
         bounds.extend(latLng);
 
-        const marker = new google.maps.Marker({
+        const marker = new Marker({
           position: latLng,
           map: map,
           label: labels[labelIndex++ % labels.length],
         });
-        markers.push(marker);
+        const tempMarkers = markers
+        tempMarkers.push(marker);
+        setMarkers(tempMarkers);
       });
 
       map.fitBounds(bounds);
@@ -93,11 +96,14 @@ const App: React.FC = () => {
       const addressStatus = await checkAddressStatus(token);
       const { status, path, error } = addressStatus;
       labelIndex = 0;
-      markers.forEach((x) => x.setMap(null));
+      if (markers.length > 0) {
+        markers.forEach((x) => x.setMap(null));
+        setMarkers([])
+      }
       if (status === 'success') {
         setWaypoints(path);
-
       } else {
+        setWaypoints([])
         setWayPointError(error);
         console.log(error)
         setIsLoading(false);
@@ -105,6 +111,11 @@ const App: React.FC = () => {
       }
     } catch (error) {
       const err = error as AggregateError
+      if (markers.length > 0) {
+        markers.forEach((x) => x.setMap(null));
+        setMarkers([])
+      }
+      setWaypoints([])
       setWayPointError(err.message);
       console.log(err.message);
       setIsLoading(false);
@@ -168,7 +179,7 @@ const App: React.FC = () => {
             </ul>
           )}
         </div>
-        <div className="lg:w-1/2 h-1/2 lg:h-auto" style={{height: '70vh'}}>
+        <div className="lg:w-1/2 h-1/2 lg:h-auto" style={{ height: '70vh' }}>
           <div id="map" style={{ height: '100%' }}></div>
         </div>
       </div>
