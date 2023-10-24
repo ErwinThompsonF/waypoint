@@ -106,7 +106,6 @@ const App: React.FC = () => {
         setWaypoints([])
         setWayPointError(error);
         console.log(error)
-        setIsLoading(false);
 
       }
     } catch (error) {
@@ -118,7 +117,6 @@ const App: React.FC = () => {
       setWaypoints([])
       setWayPointError(err.message);
       console.log(err.message);
-      setIsLoading(false);
 
     }
 
