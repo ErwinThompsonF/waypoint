@@ -31,6 +31,35 @@ npm start
 Open your browser and navigate to http://localhost:3000 to access the application.
 ```
 
+## Production Build
+To build the project for production, follow these steps:
+
+Open a terminal or command prompt.
+
+Navigate to the project directory.
+
+Run the following command to install the project dependencies:
+
+```
+npm install
+```
+
+Create a production build by running the following command:
+```
+npm run build
+```
+This command will generate an optimized production build of the project.
+After the build process completes, you will find the production-ready files in the build directory.
+
+run the production build application by running the following command:
+```
+npm start
+```
+
+This command will start a local server on port 3000, serving the production build of your application.
+
+Open your browser and navigate to http://localhost:3000 (or the appropriate port if you specified a different one) to access the deployed application.
+
 ## License
 In the installation section, we added a step (Step 3) to create a new file named `.env` in the root directory of the project. We also provided instructions on adding the required environment variables (`API_HOST` and `MAP_API_KEY`) in the `.env` file.
 
