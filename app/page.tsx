@@ -16,7 +16,7 @@ const App: React.FC = () => {
   const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let labelIndex = 0;
   const markers: google.maps.Marker[] = []
-  
+
   const loadMap = useCallback(async () => {
     const loader = new Loader({
       apiKey: process.env.MAP_API_KEY ?? '',
@@ -96,7 +96,7 @@ const App: React.FC = () => {
       markers.forEach((x) => x.setMap(null));
       if (status === 'success') {
         setWaypoints(path);
-        
+
       } else {
         setWayPointError(error);
         console.log(error)
@@ -124,8 +124,8 @@ const App: React.FC = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <div className="flex">
-        <div className="w-1/2 pr-4">
+      <div className="flex flex-col lg:flex-row">
+        <div className="lg:w-1/2 lg:pr-4">
           <form className="mb-4" onSubmit={handleSubmit}>
             <div className="mb-4">
               <label className="block text-lg font-medium mb-2">Pickup Address:</label>
@@ -134,7 +134,7 @@ const App: React.FC = () => {
                 type="text"
                 id="pickup-input"
                 value={pickupAddress}
-                name='pickupAddress'
+                name="pickupAddress"
                 onChange={(e) => setPickupAddress(e.target.value)}
               />
             </div>
@@ -145,13 +145,13 @@ const App: React.FC = () => {
                 type="text"
                 id="dropoff-input"
                 value={dropoffAddress}
-                name='dropoffAddress'
+                name="dropoffAddress"
                 onChange={(e) => setDropoffAddress(e.target.value)}
               />
             </div>
             <button
               className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded"
-              type='submit'
+              type="submit"
               disabled={isLoading}
             >
               {isLoading ? 'Loading...' : 'Submit'}
@@ -161,14 +161,14 @@ const App: React.FC = () => {
           {wayPointError !== null ? (
             <h2>{wayPointError}</h2>
           ) : (
-            <ul className="list-disc pl-6 mb-4" >
+            <ul className="list-disc pl-6 mb-4">
               {waypoints.map((waypoint, index) => (
                 <li key={index}>{`${waypoint[0]}, ${waypoint[1]}`}</li>
               ))}
             </ul>
           )}
         </div>
-        <div className="w-1/2" style={{ height: '70vh' }}>
+        <div className="lg:w-1/2 h-1/2 lg:h-auto" style={{height: '70vh'}}>
           <div id="map" style={{ height: '100%' }}></div>
         </div>
       </div>
