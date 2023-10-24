@@ -17,7 +17,7 @@ export const submitAddressRequest = async (pickupAddress: string, dropoffAddress
     }
 };
 
-export const checkAddressStatus = async (token: string) => {
+export const checkAddressStatus = async (token: string): Promise<any> => {
     try {
       const statusResponse = await axios.get(`${host}/route/${token}`);
       const { status } = statusResponse.data;
